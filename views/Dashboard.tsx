@@ -136,10 +136,21 @@ const Dashboard: React.FC<DashboardProps> = ({
 
   const handleTogglePump = async () => {
     const newState = !isPumping;
+    console.log("Toggling pump. New state:", newState ? "ON" : "OFF");
+
     setIsPumping(newState);
 
     try {
-      await fetch(`http://192.168.4.1/${newState ? "on" : "off"}`);
+      const response = await fetch(
+        `http://192.168.4.1/${newState ? "on" : "off"}`,
+      );
+      console.log("ESP32 response status:", response.status);
+
+      if (!response.ok) {
+        console.warn("ESP32 returned an error:", response.statusText);
+      } else {
+        console.log("Pump successfully toggled!");
+      }
     } catch (error) {
       console.error("Failed to connect to ESP:", error);
     }
